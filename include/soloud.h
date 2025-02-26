@@ -48,10 +48,12 @@ freely, subject to the following restrictions:
 #endif
 
 #ifdef WITH_SDL
+#undef WITH_SDL3
 #undef WITH_SDL2
 #undef WITH_SDL1
 #define WITH_SDL1
 #define WITH_SDL2
+#define WITH_SDL3
 #endif
 
 #ifdef WITH_SDL_STATIC
@@ -194,6 +196,7 @@ namespace SoLoud
 			MINIAUDIO,
 			NOSOUND,
 			NULLDRIVER,
+			SDL3,
 			BACKEND_MAX,
 		};
 
@@ -229,6 +232,9 @@ namespace SoLoud
 		// Initialize SoLoud. Must be called before SoLoud can be used.
 		result init(unsigned int aFlags = Soloud::CLIP_ROUNDOFF, unsigned int aBackend = Soloud::AUTO, unsigned int aSamplerate = Soloud::AUTO, unsigned int aBufferSize = Soloud::AUTO, unsigned int aChannels = 2);
 
+		// Initialize SoLoud. Must be called before SoLoud can be used.
+		result init(unsigned int aFlags = Soloud::CLIP_ROUNDOFF, unsigned int aBackend = Soloud::AUTO, unsigned int aSamplerate = Soloud::AUTO, unsigned int aBufferSize = Soloud::AUTO, unsigned int aChannels = 2, int deviceId = NULL );
+
 		result pause();
 		result resume();
 
@@ -251,6 +257,10 @@ namespace SoLoud
 		unsigned int getBackendSamplerate();
 		// Returns current backend buffer size
 		unsigned int getBackendBufferSize();
+		// Returns current backend device ID
+		unsigned int getBackendDeviceId();
+		// Sets the backend device ID
+		void setBackendDeviceId(unsigned int deviceId);
 
 		// Set speaker position in 3d space
 		result setSpeakerPosition(unsigned int aChannel, float aX, float aY, float aZ);
@@ -530,6 +540,8 @@ namespace SoLoud
 		unsigned int mBackendID;
 		// Current backend string
 		const char * mBackendString;
+		// Current backend device ID
+		unsigned int mBackendDeviceId;
 		// Maximum size of output buffer; used to calculate needed scratch.
 		unsigned int mBufferSize;
 		// Flags; see Soloud::FLAGS

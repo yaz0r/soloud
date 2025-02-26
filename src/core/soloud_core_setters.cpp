@@ -43,7 +43,7 @@ namespace SoLoud
 	{
 		mGlobalVolumeFader.mActive = 0;
 		mGlobalVolume = aVolume;
-	}		
+	}
 
 	result Soloud::setRelativePlaySpeed(handle aVoiceHandle, float aSpeed)
 	{
@@ -117,14 +117,14 @@ namespace SoLoud
 	}
 
 	void Soloud::setPan(handle aVoiceHandle, float aPan)
-	{		
+	{
 		FOR_ALL_VOICES_PRE
 			setVoicePan_internal(ch, aPan);
 		FOR_ALL_VOICES_POST
 	}
 
 	void Soloud::setChannelVolume(handle aVoiceHandle, unsigned int aChannel, float aVolume)
-	{		
+	{
 		FOR_ALL_VOICES_PRE
 			if (mVoice[ch]->mChannels > aChannel)
 			{
@@ -136,8 +136,8 @@ namespace SoLoud
 	void Soloud::setPanAbsolute(handle aVoiceHandle, float aLVolume, float aRVolume)
 	{
 		FOR_ALL_VOICES_PRE
-			mVoice[ch]->mPanFader.mActive = 0;	
-			mVoice[ch]->mChannelVolume[0] = aLVolume;			
+			mVoice[ch]->mPanFader.mActive = 0;
+			mVoice[ch]->mChannelVolume[0] = aLVolume;
 			mVoice[ch]->mChannelVolume[1] = aRVolume;
 			if (mVoice[ch]->mChannels == 4)
 			{
@@ -250,4 +250,8 @@ namespace SoLoud
 		return SO_NO_ERROR;
 	}
 
+	void Soloud::setBackendDeviceId(unsigned int deviceId)
+	{
+		mBackendDeviceId = deviceId;
+	}
 }
