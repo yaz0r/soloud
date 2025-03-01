@@ -41,7 +41,7 @@ freely, subject to the following restrictions:
 //#define FLOATING_POINT_DEBUG
 
 
-#if !defined(WITH_SDL2) && !defined(WITH_SDL1) && !defined(WITH_PORTAUDIO) && \
+#if !defined(WITH_SDL3) && !defined(WITH_SDL2) && !defined(WITH_SDL1) && !defined(WITH_PORTAUDIO) && \
    !defined(WITH_OPENAL) && !defined(WITH_XAUDIO2) && !defined(WITH_WINMM) && \
    !defined(WITH_WASAPI) && !defined(WITH_OSS) && !defined(WITH_SDL1_STATIC) && \
    !defined(WITH_SDL2_STATIC) && !defined(WITH_ALSA) && !defined(WITH_OPENSLES) && \
@@ -118,7 +118,7 @@ namespace SoLoud
 		mBackendCleanupFunc = NULL;
 		mBackendPauseFunc = NULL;
 		mBackendResumeFunc = NULL;
-		mChannels = 2;
+		mChannels = 2;		
 		mStreamTime = 0;
 		mLastClockedTime = 0;
 		mAudioSourceID = 1;
@@ -159,10 +159,10 @@ namespace SoLoud
 		m3dAt[2] = -1;
 		m3dUp[0] = 0;
 		m3dUp[1] = 1;
-		m3dUp[2] = 0;
+		m3dUp[2] = 0;		
 		m3dVelocity[0] = 0;
 		m3dVelocity[1] = 0;
-		m3dVelocity[2] = 0;
+		m3dVelocity[2] = 0;		
 		m3dSoundSpeed = 343.3f;
 		mMaxActiveVoices = 16;
 		mHighestVoice = 0;
@@ -204,7 +204,7 @@ namespace SoLoud
 		mAudioThreadMutex = NULL;
 	}
 
-	result Soloud::init(unsigned int aFlags, unsigned int aBackend, unsigned int aSamplerate, unsigned int aBufferSize, unsigned int aChannels)
+	result Soloud::init(unsigned int aFlags, unsigned int aBackend, unsigned int aSamplerate, unsigned int aBufferSize, unsigned int aChannels, void const * clientData)
 	{
 		if (aBackend >= BACKEND_MAX || aChannels == 3 || aChannels == 5 || aChannels == 7 || aChannels > MAX_CHANNELS)
 			return INVALID_PARAMETER;
@@ -225,7 +225,7 @@ namespace SoLoud
 
 #if defined(WITH_SDL1_STATIC)
 		if (!inited &&
-			(aBackend == Soloud::SDL1 ||
+			(aBackend == Soloud::SDL1 || 
 			aBackend == Soloud::AUTO))
 		{
 			if (aBufferSize == Soloud::AUTO) buffersize = 2048;
@@ -238,7 +238,7 @@ namespace SoLoud
 			}
 
 			if (ret != 0 && aBackend != Soloud::AUTO)
-				return ret;
+				return ret;			
 		}
 #endif
 
@@ -254,6 +254,33 @@ namespace SoLoud
 			{
 				inited = 1;
 				mBackendID = Soloud::SDL2;
+			}
+
+			if (ret != 0 && aBackend != Soloud::AUTO)
+				return ret;
+		}
+#endif
+
+#if defined(WITH_SDL3)
+		if (!inited &&
+			(aBackend == Soloud::SDL3 ||
+			aBackend == Soloud::AUTO))
+		{
+			if (aBufferSize == Soloud::AUTO) buffersize = 2048;
+
+			int ret = sdl3_init(
+				this,
+				aFlags,
+				samplerate,
+				buffersize,
+				aChannels,
+				clientData
+			);
+
+			if (ret == 0)
+			{
+				inited = 1;
+				mBackendID = Soloud::SDL3;
 			}
 
 			if (ret != 0 && aBackend != Soloud::AUTO)
@@ -282,7 +309,7 @@ namespace SoLoud
 
 #if defined(WITH_SDL1)
 		if (!inited &&
-			(aBackend == Soloud::SDL1 ||
+			(aBackend == Soloud::SDL1 || 
 			aBackend == Soloud::AUTO))
 		{
 			if (aBufferSize == Soloud::AUTO) buffersize = 2048;
@@ -295,7 +322,7 @@ namespace SoLoud
 			}
 
 			if (ret != 0 && aBackend != Soloud::AUTO)
-				return ret;
+				return ret;			
 		}
 #endif
 
@@ -333,7 +360,7 @@ namespace SoLoud
 			}
 
 			if (ret != 0 && aBackend != Soloud::AUTO)
-				return ret;
+				return ret;			
 		}
 #endif
 
@@ -352,7 +379,7 @@ namespace SoLoud
 			}
 
 			if (ret != 0 && aBackend != Soloud::AUTO)
-				return ret;
+				return ret;			
 		}
 #endif
 
@@ -371,7 +398,7 @@ namespace SoLoud
 			}
 
 			if (ret != 0 && aBackend != Soloud::AUTO)
-				return ret;
+				return ret;			
 		}
 #endif
 
@@ -391,7 +418,7 @@ namespace SoLoud
 			}
 
 			if (ret != 0 && aBackend != Soloud::AUTO)
-				return ret;
+				return ret;			
 		}
 #endif
 
@@ -410,10 +437,10 @@ namespace SoLoud
 			}
 
 			if (ret != 0 && aBackend != Soloud::AUTO)
-				return ret;
+				return ret;			
 		}
 #endif
-
+															  
 #if defined(WITH_JACK)
 		if (!inited &&
 			(aBackend == Soloud::JACK ||
@@ -429,7 +456,7 @@ namespace SoLoud
 			}
 
 			if (ret != 0 && aBackend != Soloud::AUTO)
-				return ret;
+				return ret;			
 		}
 #endif
 
@@ -448,7 +475,7 @@ namespace SoLoud
 			}
 
 			if (ret != 0 && aBackend != Soloud::AUTO)
-				return ret;
+				return ret;			
 		}
 #endif
 
@@ -467,7 +494,7 @@ namespace SoLoud
 			}
 
 			if (ret != 0 && aBackend != Soloud::AUTO)
-				return ret;
+				return ret;			
 		}
 #endif
 
@@ -486,7 +513,7 @@ namespace SoLoud
 			}
 
 			if (ret != 0 && aBackend != Soloud::AUTO)
-				return ret;
+				return ret;			
 		}
 #endif
 
@@ -505,13 +532,13 @@ namespace SoLoud
 			}
 
 			if (ret != 0 && aBackend != Soloud::AUTO)
-				return ret;
+				return ret;			
 		}
 #endif
 
 #if defined(WITH_VITA_HOMEBREW)
 		if (!inited &&
-			(aBackend == Soloud::VITA_HOMEBREW ||
+			(aBackend == Soloud::VITA_HOMEBREW || 
 			aBackend == Soloud::AUTO))
 		{
 			int ret = vita_homebrew_init(this, aFlags, samplerate, buffersize, aChannels);
@@ -522,7 +549,7 @@ namespace SoLoud
 			}
 
 			if (ret != 0 && aBackend != Soloud::AUTO)
-				return ret;
+				return ret;			
 		}
 #endif
 
@@ -560,7 +587,7 @@ namespace SoLoud
 			}
 
 			if (ret != 0)
-				return ret;
+				return ret;			
 		}
 #endif
 
@@ -571,58 +598,7 @@ namespace SoLoud
 		return 0;
 	}
 
-	result Soloud::init(unsigned int aFlags, unsigned int aBackend, unsigned int aSamplerate, unsigned int aBufferSize, unsigned int aChannels, int deviceId)
-	{
-#if defined(WITH_SDL3)
-		if (aBackend >= BACKEND_MAX || aChannels == 3 || aChannels == 5 || aChannels == 7 || aChannels > MAX_CHANNELS)
-			return INVALID_PARAMETER;
-
-		deinit();
-
-		mAudioThreadMutex = Thread::createMutex();
-
-		mBackendID = 0;
-		mBackendString = 0;
-
-		int samplerate = 44100;
-		int buffersize = 2048;
-		int inited = 0;
-
-		if (aSamplerate != Soloud::AUTO) samplerate = aSamplerate;
-		if (aBufferSize != Soloud::AUTO) buffersize = aBufferSize;
-
-		if (!inited &&
-			(aBackend == Soloud::SDL3 ||
-			aBackend == Soloud::AUTO))
-		{
-			if (aBufferSize == Soloud::AUTO) buffersize = 2048;
-
-			int ret = sdl3_init(
-				this,
-				aFlags,
-				samplerate,
-				buffersize,
-				aChannels,
-				deviceId
-			);
-
-			if (ret == 0)
-			{
-				inited = 1;
-				mBackendID = Soloud::SDL3;
-			}
-
-			if (ret != 0 && aBackend != Soloud::AUTO)
-				return ret;
-		}
-#endif
-		if (!inited && aBackend != Soloud::AUTO)
-			return NOT_IMPLEMENTED;
-		if (!inited)
-			return UNKNOWN_ERROR;
-		return 0;
-	}
-
+	
 	result Soloud::pause()
 	{
 		if (mBackendPauseFunc)
@@ -638,10 +614,10 @@ namespace SoLoud
 
 		return NOT_IMPLEMENTED;
 	}
-
-
+	
+	
 	void Soloud::postinit_internal(unsigned int aSamplerate, unsigned int aBufferSize, unsigned int aFlags, unsigned int aChannels)
-	{
+	{		
 		mGlobalVolume = 1;
 		mChannels = aChannels;
 		mSamplerate = aSamplerate;
@@ -700,7 +676,7 @@ namespace SoLoud
 			m3dSpeakerPosition[1 * 3 + 1] = 0;
 			m3dSpeakerPosition[1 * 3 + 2] = 1;
 
-			// center and subwoofer.
+			// center and subwoofer. 
 			m3dSpeakerPosition[2 * 3 + 0] = 0;
 			m3dSpeakerPosition[2 * 3 + 1] = 0;
 			m3dSpeakerPosition[2 * 3 + 2] = 1;
@@ -726,7 +702,7 @@ namespace SoLoud
 			m3dSpeakerPosition[1 * 3 + 1] = 0;
 			m3dSpeakerPosition[1 * 3 + 2] = 1;
 
-			// center and subwoofer.
+			// center and subwoofer. 
 			m3dSpeakerPosition[2 * 3 + 0] = 0;
 			m3dSpeakerPosition[2 * 3 + 1] = 0;
 			m3dSpeakerPosition[2 * 3 + 2] = 1;
@@ -905,7 +881,7 @@ namespace SoLoud
 			for (j = 0; j < mChannels; j++)
 			{
 				__m128 vol = _mm_load_ps(volumes.mData);
-				for (i = 0; i < samplequads; i++)
+				for (i = 0; i < samplequads; i++) 
 				{
 					//float f1 = aBuffer.mData[c] * v; c++; v += vd;
 					__m128 f = _mm_load_ps(&aBuffer.mData[c]);
@@ -966,7 +942,7 @@ namespace SoLoud
 			for (j = 0; j < mChannels; j++)
 			{
 				v = aVolume0;
-				for (i = 0; i < samplequads; i++)
+				for (i = 0; i < samplequads; i++) 
 				{
 					float f1 = aBuffer.mData[c] * v; c++; v += vd;
 					float f2 = aBuffer.mData[c] * v; c++; v += vd;
@@ -1005,9 +981,9 @@ namespace SoLoud
 	static void resample_catmullrom(float* aSrc,
 		float* aSrc1,
 		float* aDst,
-		int aSrcOffset,
-		int aDstSampleCount,
-		int aStepFixed)
+				  int aSrcOffset,
+				  int aDstSampleCount,
+				  int aStepFixed)
 	{
 		int i;
 		int pos = aSrcOffset;
@@ -1663,7 +1639,7 @@ namespace SoLoud
 			}
 		}
 
-		// Accumulate sound sources
+		// Accumulate sound sources		
 		for (i = 0; i < mActiveVoiceCount; i++)
 		{
 			AudioSourceInstance *voice = mVoice[mActiveVoice[i]];
@@ -1678,7 +1654,7 @@ namespace SoLoud
 					step = 0;
 				unsigned int step_fixed = (int)floor(step * FIXPOINT_FRAC_MUL);
 				unsigned int outofs = 0;
-
+			
 				if (voice->mDelaySamples)
 				{
 					if (voice->mDelaySamples > aSamplesToRead)
@@ -1691,14 +1667,14 @@ namespace SoLoud
 						outofs = voice->mDelaySamples;
 						voice->mDelaySamples = 0;
 					}
-
+					
 					// Clear scratch where we're skipping
 					unsigned int k;
 					for (k = 0; k < voice->mChannels; k++)
 					{
-						memset(aScratch + k * aBufferSize, 0, sizeof(float) * outofs);
+						memset(aScratch + k * aBufferSize, 0, sizeof(float) * outofs); 
 					}
-				}
+				}												
 
 				while (step_fixed != 0 && outofs < aSamplesToRead)
 				{
@@ -1749,7 +1725,7 @@ namespace SoLoud
 							voice->mSrcOffset -= SAMPLE_GRANULARITY * FIXPOINT_FRAC_MUL;
 						}
 
-
+					
 						// Run the per-stream filters to get our source data
 
 						for (j = 0; j < FILTERS_PER_STREAM; j++)
@@ -1758,7 +1734,7 @@ namespace SoLoud
 							{
 								voice->mFilter[j]->filter(
 									voice->mResampleData[0],
-									SAMPLE_GRANULARITY,
+									SAMPLE_GRANULARITY, 
 									SAMPLE_GRANULARITY,
 									voice->mChannels,
 									voice->mSamplerate,
@@ -1803,12 +1779,12 @@ namespace SoLoud
 							case RESAMPLER_POINT:
 								resample_point(voice->mResampleData[0] + SAMPLE_GRANULARITY * j,
 									voice->mResampleData[1] + SAMPLE_GRANULARITY * j,
-									aScratch + aBufferSize * j + outofs,
-									voice->mSrcOffset,
-									writesamples,
+									 aScratch + aBufferSize * j + outofs, 
+									 voice->mSrcOffset,
+									 writesamples,
 									/*voice->mSamplerate,
 									aSamplerate,*/
-									step_fixed);
+									 step_fixed);
 								break;
 							case RESAMPLER_CATMULLROM:
 								resample_catmullrom(voice->mResampleData[0] + SAMPLE_GRANULARITY * j,
@@ -1831,8 +1807,8 @@ namespace SoLoud
 									aSamplerate,*/
 									step_fixed);
 								break;
-							}
 						}
+					}
 					}
 
 					// Keep track of how many samples we've written so far
@@ -1841,7 +1817,7 @@ namespace SoLoud
 					// Move source pointer onwards (writesamples may be zero)
 					voice->mSrcOffset += writesamples * step_fixed;
 				}
-
+				
 				// Handle panning and channel expansion (and/or shrinking)
 				panAndExpand(voice, aBuffer, aSamplesToRead, aBufferSize, aScratch, aChannels);
 
@@ -2069,37 +2045,37 @@ namespace SoLoud
 		int len = candidates - mustlive;
 		unsigned int *data = mActiveVoice + mustlive;
 		int k = mActiveVoiceCount;
-		for (;;)
-		{
-			for (; left + 1 < len; len++)
-			{
-				if (pos == 24) len = stack[pos = 0];
+		for (;;) 
+		{                                 
+			for (; left + 1 < len; len++) 
+			{                
+				if (pos == 24) len = stack[pos = 0]; 
 				int pivot = data[left];
 				float pivotvol = mVoice[pivot]->mOverallVolume;
-				stack[pos++] = len;
-				for (right = left - 1;;)
+				stack[pos++] = len;      
+				for (right = left - 1;;) 
 				{
-					do
+					do 
 					{
 						right++;
-					}
+					} 
 					while (mVoice[data[right]]->mOverallVolume > pivotvol);
 					do
 					{
 						len--;
 					}
 					while (pivotvol > mVoice[data[len]]->mOverallVolume);
-					if (right >= len) break;
+					if (right >= len) break;       
 					int temp = data[right];
 					data[right] = data[len];
 					data[len] = temp;
-				}
+				}                        
 			}
-			if (pos == 0) break;
+			if (pos == 0) break;         
 			if (left >= k) break;
-			left = len;
-			len = stack[--pos];
-		}
+			left = len;                  
+			len = stack[--pos];          
+		}	
 		// TODO: should the rest of the voices be flagged INAUDIBLE?
 		mapResampleBuffers_internal();
 	}
@@ -2196,7 +2172,7 @@ namespace SoLoud
 				mVoice[i]->mStreamPosition += (double)buffertime * (double)mVoice[i]->mOverallRelativePlaySpeed;
 
 				// TODO: this is actually unstable, because mStreamTime depends on the relative
-				// play speed.
+				// play speed. 
 				if (mVoice[i]->mRelativePlaySpeedFader.mActive > 0)
 				{
 					float speed = mVoice[i]->mRelativePlaySpeedFader.get(mVoice[i]->mStreamTime);
@@ -2368,5 +2344,4 @@ namespace SoLoud
 			Thread::unlockMutex(mAudioThreadMutex);
 		}
 	}
-
 };

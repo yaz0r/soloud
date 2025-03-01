@@ -1,3 +1,4 @@
+
 /*
 SoLoud audio engine
 Copyright (c) 2013-2018 Jari Komppa
@@ -24,6 +25,7 @@ freely, subject to the following restrictions:
 #include <stdlib.h>
 
 #include "soloud.h"
+#include "soloud_backend_data_sdl3.h"
 
 #if !defined(WITH_SDL3)
 
@@ -35,7 +37,7 @@ namespace SoLoud
 		unsigned int aSamplerate,
 		unsigned int aBuffer,
 		unsigned int aChannels,
-		int deviceId
+		void const * backendData
 	)
 	{
 		return NOT_IMPLEMENTED;
@@ -65,21 +67,19 @@ extern "C"
 
 namespace SoLoud
 {
-	static SDL_AudioSpec gActiveAudioSpec;
-	static SDL_AudioStream * gAudioStream;
-	static SDL_AudioDeviceID gAudioDeviceId;
+	static SoLoudBackendDataSdl3 gBackendData{};
 
 	void soloud_sdl2_audiomixer(Uint8 * stream, void * userdata, int len)
 	{
 		SoLoud::Soloud *soloud = (SoLoud::Soloud *)userdata;
-		if (gActiveAudioSpec.format == SDL_AUDIO_F32)
+		if (gBackendData.activeAudioSpec.format == SDL_AUDIO_F32)
 		{
-			int samples = len / (gActiveAudioSpec.channels * sizeof(float));
+			int samples = len / (gBackendData.activeAudioSpec.channels * sizeof(float));
 			soloud->mix((float *)stream, samples);
 		}
 		else // assume s16 if not float
 		{
-			int samples = len / (gActiveAudioSpec.channels * sizeof(short));
+			int samples = len / (gBackendData.activeAudioSpec.channels * sizeof(short));
 			soloud->mixSigned16((short *)stream, samples);
 		}
 	}
@@ -106,7 +106,7 @@ namespace SoLoud
 
 	static void soloud_sdl3_deinit(SoLoud::Soloud * /*aSoloud*/)
 	{
-		dll_SDL3_CloseAudioDevice(gAudioDeviceId);
+		dll_SDL3_CloseAudioDevice(gBackendData.audioDeviceId);
 	}
 
 	result sdl3_init(
@@ -115,7 +115,7 @@ namespace SoLoud
 		unsigned int aSamplerate,
 		unsigned int aBuffer,
 		unsigned int aChannels,
-		unsigned int deviceId
+		void const * clientData
 	)
 	{
 		if (!dll_SDL3_found())
@@ -129,58 +129,67 @@ namespace SoLoud
 			}
 		}
 
+		SoLoudClientDataSdl3 const * data = NULL;
+		if (clientData != NULL)
+		{
+			data = static_cast<SoLoudClientDataSdl3 const *>(clientData);
+			gBackendData.audioDeviceId = data->deviceId;
+		}
+		else
+		{
+			gBackendData.audioDeviceId = 0;
+		}
+
+		SDL_AudioDeviceID const deviceId = gBackendData.audioDeviceId;
 		SDL_AudioSpec as{};
 		as.freq = aSamplerate;
 		as.format = SDL_AUDIO_F32;
 		as.channels = (Uint8)aChannels;
 
-		auto * audioStream = dll_SDL3_OpenAudioDeviceStream(
-			deviceId,
+		gBackendData.audioStream = dll_SDL3_OpenAudioDeviceStream(
+			gBackendData.audioDeviceId,
 			&as,
 			soloud_sdl3_audiomixer,
 			static_cast<void *>(aSoloud)
 		);
 
-		auto const deviceIdFromStream = SDL_GetAudioStreamDevice(audioStream);
+		gBackendData.audioDeviceId = SDL_GetAudioStreamDevice(gBackendData.audioStream);
 
-		gAudioDeviceId = deviceIdFromStream;
-
-		if (gAudioDeviceId == NULL)
+		if (gBackendData.audioDeviceId == NULL)
 		{
 			as.format = SDL_AUDIO_S16;
-			audioStream = dll_SDL3_OpenAudioDeviceStream(
+			gBackendData.audioStream = dll_SDL3_OpenAudioDeviceStream(
 				deviceId,
 				NULL,
 				soloud_sdl3_audiomixer,
 				static_cast<void *>(aSoloud)
 			);
 
-			gAudioDeviceId = SDL_GetAudioStreamDevice(audioStream);
+			gBackendData.audioDeviceId = SDL_GetAudioStreamDevice(gBackendData.audioStream);
 
-			if (gAudioDeviceId == NULL)
+			if (gBackendData.audioDeviceId == NULL)
 			{
 				return UNKNOWN_ERROR;
 			}
 		}
 
 		SDL_GetAudioDeviceFormat(
-			gAudioDeviceId,
-			&gActiveAudioSpec,
+			gBackendData.audioDeviceId,
+			&gBackendData.activeAudioSpec,
 			NULL
 		);
 
-		aSoloud->setDeviceId(gAudioDeviceId);
-
 		aSoloud->postinit_internal(
-			gActiveAudioSpec.freq,
+			gBackendData.activeAudioSpec.freq,
 			aBuffer,
 			aFlags,
-			gActiveAudioSpec.channels
+			gBackendData.activeAudioSpec.channels
 		);
 
 		aSoloud->mBackendCleanupFunc = soloud_sdl3_deinit;
 
-		dll_SDL3_PauseAudioStreamDevice(gAudioStream);
+		dll_SDL3_PauseAudioStreamDevice(gBackendData.audioStream);
+		aSoloud->mBackendData = &gBackendData;
 		aSoloud->mBackendString = "SDL3 (dynamic)";
 		return 0;
 	}

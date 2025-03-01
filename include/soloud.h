@@ -230,13 +230,9 @@ namespace SoLoud
 		};
 
 		// Initialize SoLoud. Must be called before SoLoud can be used.
-		result init(unsigned int aFlags = Soloud::CLIP_ROUNDOFF, unsigned int aBackend = Soloud::AUTO, unsigned int aSamplerate = Soloud::AUTO, unsigned int aBufferSize = Soloud::AUTO, unsigned int aChannels = 2);
-
-		// Initialize SoLoud. Must be called before SoLoud can be used.
-		result init(unsigned int aFlags = Soloud::CLIP_ROUNDOFF, unsigned int aBackend = Soloud::AUTO, unsigned int aSamplerate = Soloud::AUTO, unsigned int aBufferSize = Soloud::AUTO, unsigned int aChannels = 2, int deviceId);
-
+		result init(unsigned int aFlags = Soloud::CLIP_ROUNDOFF, unsigned int aBackend = Soloud::AUTO, unsigned int aSamplerate = Soloud::AUTO, unsigned int aBufferSize = Soloud::AUTO, unsigned int aChannels = 2, void const * clientData = NULL);
 		result pause();
-		result resume();
+		result resume();		
 
 		// Deinitialize SoLoud. Must be called before shutting down.
 		void deinit();
@@ -257,10 +253,6 @@ namespace SoLoud
 		unsigned int getBackendSamplerate();
 		// Returns current backend buffer size
 		unsigned int getBackendBufferSize();
-		// Returns current backend device ID
-		unsigned int getBackendDeviceId();
-		// Sets the backend device ID
-		void setBackendDeviceId(unsigned int deviceId);
 
 		// Set speaker position in 3d space
 		result setSpeakerPosition(unsigned int aChannel, float aX, float aY, float aZ);
