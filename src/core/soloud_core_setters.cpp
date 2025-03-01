@@ -160,7 +160,7 @@ namespace SoLoud
 				mVoice[ch]->mChannelVolume[6] = aLVolume;
 				mVoice[ch]->mChannelVolume[7] = aRVolume;
 			}
-			FOR_ALL_VOICES_POST
+		FOR_ALL_VOICES_POST
 	}
 
 	void Soloud::setInaudibleBehavior(handle aVoiceHandle, bool aMustTick, bool aKill)

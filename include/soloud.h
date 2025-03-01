@@ -231,8 +231,9 @@ namespace SoLoud
 
 		// Initialize SoLoud. Must be called before SoLoud can be used.
 		result init(unsigned int aFlags = Soloud::CLIP_ROUNDOFF, unsigned int aBackend = Soloud::AUTO, unsigned int aSamplerate = Soloud::AUTO, unsigned int aBufferSize = Soloud::AUTO, unsigned int aChannels = 2, void const * clientData = NULL);
+
 		result pause();
-		result resume();		
+		result resume();
 
 		// Deinitialize SoLoud. Must be called before shutting down.
 		void deinit();
@@ -532,8 +533,6 @@ namespace SoLoud
 		unsigned int mBackendID;
 		// Current backend string
 		const char * mBackendString;
-		// Current backend device ID
-		unsigned int mBackendDeviceId;
 		// Maximum size of output buffer; used to calculate needed scratch.
 		unsigned int mBufferSize;
 		// Flags; see Soloud::FLAGS

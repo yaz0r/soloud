@@ -440,7 +440,7 @@ namespace SoLoud
 				return ret;			
 		}
 #endif
-															  
+
 #if defined(WITH_JACK)
 		if (!inited &&
 			(aBackend == Soloud::JACK ||
@@ -598,7 +598,6 @@ namespace SoLoud
 		return 0;
 	}
 
-	
 	result Soloud::pause()
 	{
 		if (mBackendPauseFunc)
@@ -614,8 +613,7 @@ namespace SoLoud
 
 		return NOT_IMPLEMENTED;
 	}
-	
-	
+
 	void Soloud::postinit_internal(unsigned int aSamplerate, unsigned int aBufferSize, unsigned int aFlags, unsigned int aChannels)
 	{		
 		mGlobalVolume = 1;
@@ -981,9 +979,9 @@ namespace SoLoud
 	static void resample_catmullrom(float* aSrc,
 		float* aSrc1,
 		float* aDst,
-				  int aSrcOffset,
-				  int aDstSampleCount,
-				  int aStepFixed)
+		int aSrcOffset,
+		int aDstSampleCount,
+		int aStepFixed)
 	{
 		int i;
 		int pos = aSrcOffset;
@@ -1734,7 +1732,7 @@ namespace SoLoud
 							{
 								voice->mFilter[j]->filter(
 									voice->mResampleData[0],
-									SAMPLE_GRANULARITY, 
+									SAMPLE_GRANULARITY,
 									SAMPLE_GRANULARITY,
 									voice->mChannels,
 									voice->mSamplerate,
@@ -1779,12 +1777,12 @@ namespace SoLoud
 							case RESAMPLER_POINT:
 								resample_point(voice->mResampleData[0] + SAMPLE_GRANULARITY * j,
 									voice->mResampleData[1] + SAMPLE_GRANULARITY * j,
-									 aScratch + aBufferSize * j + outofs, 
-									 voice->mSrcOffset,
-									 writesamples,
+									aScratch + aBufferSize * j + outofs,
+									voice->mSrcOffset,
+									writesamples,
 									/*voice->mSamplerate,
 									aSamplerate,*/
-									 step_fixed);
+									step_fixed);
 								break;
 							case RESAMPLER_CATMULLROM:
 								resample_catmullrom(voice->mResampleData[0] + SAMPLE_GRANULARITY * j,
@@ -1807,8 +1805,8 @@ namespace SoLoud
 									aSamplerate,*/
 									step_fixed);
 								break;
+							}
 						}
-					}
 					}
 
 					// Keep track of how many samples we've written so far
