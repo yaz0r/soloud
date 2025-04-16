@@ -3,6 +3,7 @@ local WITH_SDL2 = 0
 local WITH_SDL3 = 0
 local WITH_SDL_STATIC = 0
 local WITH_SDL2_STATIC = 0
+local WITH_SDL3_STATIC = 0
 local WITH_PORTAUDIO = 0
 local WITH_OPENAL = 0
 local WITH_XAUDIO2 = 0
@@ -117,6 +118,11 @@ newoption {
 newoption {
 	trigger		  = "with-sdl2static-only",
 	description = "Only include sdl2 that doesn't use dyndll in build"
+}
+
+newoption {
+	trigger		  = "with-sdl3static-only",
+	description = "Only include sdl3 that doesn't use dyndll in build"
 }
 
 newoption {
@@ -256,6 +262,7 @@ if _OPTIONS["with-sdl-only"] then
 	WITH_SDL3 = 0
 	WITH_SDL_STATIC = 0
 	WITH_SDL2_STATIC = 0
+	WITH_SDL3_STATIC = 0
 	WITH_PORTAUDIO = 0
 	WITH_OPENAL = 0
 	WITH_XAUDIO2 = 0
@@ -272,6 +279,7 @@ if _OPTIONS["with-sdl2-only"] then
 	WITH_SDL3 = 0
 	WITH_SDL_STATIC = 0
 	WITH_SDL2_STATIC = 0
+	WITH_SDL3_STATIC = 0
 	WITH_PORTAUDIO = 0
 	WITH_OPENAL = 0
 	WITH_XAUDIO2 = 0
@@ -288,6 +296,7 @@ if _OPTIONS["with-sdl3-only"] then
 	WITH_SDL3 = 1
 	WITH_SDL_STATIC = 0
 	WITH_SDL2_STATIC = 0
+	WITH_SDL3_STATIC = 0
 	WITH_PORTAUDIO = 0
 	WITH_OPENAL = 0
 	WITH_XAUDIO2 = 0
@@ -303,6 +312,8 @@ if _OPTIONS["with-sdlstatic-only"] then
 	WITH_SDL2 = 0
 	WITH_SDL3 = 0
 	WITH_SDL_STATIC = 1
+	WITH_SDL2_STATIC = 0
+	WITH_SDL3_STATIC = 0
 	WITH_PORTAUDIO = 0
 	WITH_OPENAL = 0
 	WITH_XAUDIO2 = 0
@@ -319,6 +330,7 @@ if _OPTIONS["with-sdl2static-only"] then
 	WITH_SDL3 = 0
 	WITH_SDL_STATIC = 0
 	WITH_SDL2_STATIC = 1
+	WITH_SDL3_STATIC = 0
 	WITH_PORTAUDIO = 0
 	WITH_OPENAL = 0
 	WITH_XAUDIO2 = 0
@@ -329,12 +341,13 @@ if _OPTIONS["with-sdl2static-only"] then
 	WITH_MINIAUDIO = 0
 end
 
-if _OPTIONS["with-sdl2static-only"] then
+if _OPTIONS["with-sdl3static-only"] then
 	WITH_SDL = 0
 	WITH_SDL2 = 0
 	WITH_SDL3 = 0
 	WITH_SDL_STATIC = 0
-	WITH_SDL2_STATIC = 1
+	WITH_SDL2_STATIC = 0
+	WITH_SDL3_STATIC = 1
 	WITH_PORTAUDIO = 0
 	WITH_OPENAL = 0
 	WITH_XAUDIO2 = 0
@@ -351,6 +364,7 @@ if _OPTIONS["with-vita-homebrew-only"] then
 	WITH_SDL3 = 0
 	WITH_SDL_STATIC = 0
 	WITH_SDL2_STATIC = 0
+	WITH_SDL3_STATIC = 0
 	WITH_PORTAUDIO = 0
 	WITH_OPENAL = 0
 	WITH_XAUDIO2 = 0
@@ -377,6 +391,7 @@ if _OPTIONS["with-jack-only"] then
 	WITH_SDL3 = 0
 	WITH_SDL_STATIC = 0
 	WITH_SDL2_STATIC = 0
+	WITH_SDL3_STATIC = 0
 	WITH_PORTAUDIO = 0
 	WITH_OPENAL = 0
 	WITH_XAUDIO2 = 0
@@ -401,6 +416,7 @@ if _OPTIONS["with-miniaudio-only"] then
 	WITH_SDL3 = 0
 	WITH_SDL_STATIC = 0
 	WITH_SDL2_STATIC = 0
+	WITH_SDL3_STATIC = 0
 	WITH_PORTAUDIO = 0
 	WITH_OPENAL = 0
 	WITH_XAUDIO2 = 0
@@ -421,6 +437,7 @@ if _OPTIONS["with-native-only"] then
 	WITH_SDL3 = 0
 	WITH_SDL_STATIC = 0
 	WITH_SDL2_STATIC = 0
+	WITH_SDL3_STATIC = 0
 	WITH_PORTAUDIO = 0
 	WITH_OPENAL = 0
 	WITH_XAUDIO2 = 0
@@ -650,7 +667,7 @@ if (WITH_SDL2 == 1 or WITH_SDL2STATIC) then
 end
 -- 8< -- 8< -- 8< -- 8< -- 8< -- 8< -- 8< -- 8< -- 8< -- 8< --
 
-if (WITH_SDL3 == 1) then
+if (WITH_SDL3 == 1 or WITH_SDL3STATIC) then
 
 	project "SoloudDemoCommon"
 		kind "StaticLib"
@@ -817,6 +834,17 @@ if (WITH_SDL2_STATIC == 1) then
 	includedirs {
 	  "../include",
 	  sdl2_include
+	}
+end
+
+if (WITH_SDL3_STATIC == 1) then
+		defines { "WITH_SDL3_STATIC" }
+	files {
+	  "../src/backend/sdl3_static/**.c*"
+	  }
+	includedirs {
+	  "../include",
+	  sdl3_include
 	}
 end
 
