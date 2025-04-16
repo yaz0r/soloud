@@ -25,7 +25,7 @@ freely, subject to the following restrictions:
 #ifndef SOLOUD_BACKEND_DATA_SDL3_H
 #define SOLOUD_BACKEND_DATA_SDL3_H
 
-#ifdef WITH_SDL3
+#if defined(WITH_SDL3) || defined(WITH_SDL3_STATIC)
 #include "SDL3/SDL.h"
 
 namespace SoLoud
