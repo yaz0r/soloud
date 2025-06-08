@@ -24,7 +24,6 @@ freely, subject to the following restrictions:
 #include <stdlib.h>
 
 #include "soloud.h"
-#include "soloud_backend_data_sdl3.h"
 
 #if !defined(WITH_SDL3_STATIC)
 
@@ -38,6 +37,7 @@ namespace SoLoud
 
 #else
 
+#include "soloud_backend_data_sdl3.h"
 #include "SDL.h"
 #include <math.h>
 
@@ -121,7 +121,7 @@ namespace SoLoud
 
         gBackendData.audioDeviceId = SDL_GetAudioStreamDevice(gBackendData.audioStream);
 
-        if (gBackendData.audioDeviceId == NULL)
+        if (gBackendData.audioDeviceId == 0)
         {
             as.format = SDL_AUDIO_S16;
             gBackendData.audioStream = SDL_OpenAudioDeviceStream(
@@ -133,7 +133,7 @@ namespace SoLoud
 
             gBackendData.audioDeviceId = SDL_GetAudioStreamDevice(gBackendData.audioStream);
 
-            if (gBackendData.audioDeviceId == NULL)
+            if (gBackendData.audioDeviceId == 0)
             {
                 return UNKNOWN_ERROR;
             }
